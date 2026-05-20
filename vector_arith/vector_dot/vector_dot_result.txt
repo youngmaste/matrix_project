@@ -1,0 +1,15 @@
+===== AUTO Vector Dot Product (REAL + COMPLEX) =====
+
+Detected: COMPLEX vectors
+Using: v1 · v2 = sum(v1[i] * conj(v2[i]))
+
+Vector 1:
+(1.0000,1.0000)
+(2.0000,3.0000)
+
+Vector 2:
+(4.0000,5.0000)
+(6.0000,8.0000)
+
+----- Result -----
+Dot Product = (45.0000,1.0000)

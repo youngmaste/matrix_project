@@ -1,0 +1,9 @@
+===== Real Matrix Condition Number =====
+
+Matrix A:
+      1.0000      2.0000
+      2.0000      4.0000
+
+
+----- Result -----
+Condition Number = infinity

@@ -1,0 +1,17 @@
+===== AUTO Vector Subtraction (REAL + COMPLEX) =====
+
+Detected: COMPLEX vectors
+
+Vector 1:
+(1.0000,1.0000)
+(2.0000,3.0000)
+
+Vector 2:
+(4.0000,5.0000)
+(6.0000,8.0000)
+
+----- Result -----
+Vector Subtraction (v1 - v2):
+(-3.0000,-4.0000)
+(-4.0000,-5.0000)
+
