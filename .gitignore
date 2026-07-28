@@ -1,0 +1,13 @@
+# 编译产物
+*.exe
+*.obj
+*.o
+*.dll
+# CMake构建目录
+build/
+gui/build/
+# 程序运行输出
+output/
+# 系统缓存
+.DS_Store
+*.log
