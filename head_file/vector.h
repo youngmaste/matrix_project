@@ -135,7 +135,7 @@ public:
     }
     // ==============================================================
 
-    // 🔥 核心修复：新增向量输出运算符（主程序打印特征向量必须用）
+    //  核心修复：新增向量输出运算符（主程序打印特征向量必须用）
     friend std::ostream& operator<<(std::ostream& os, const Vector<T>& v) {
         for (int i = 0; i < v.rows(); ++i)
             os << std::setw(12) << v(i, 0) << "\n";
@@ -143,7 +143,7 @@ public:
     }
 };
 
-// 🔥 核心修复：新增 矩阵*向量 运算符（矩阵运算、特征值计算必须用）
+//  新增 矩阵*向量 运算符（矩阵运算、特征值计算必须用）
 template <typename T>
 Vector<T> operator*(const Matrix<T>& mat, const Vector<T>& vec) {
     if (mat.cols() != vec.rows())

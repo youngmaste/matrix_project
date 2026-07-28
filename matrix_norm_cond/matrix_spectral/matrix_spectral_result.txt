@@ -1,9 +1,0 @@
-===== AUTO Matrix Spectral Norm =====
-
-Detected: COMPLEX matrix
-
-Matrix A:
-(1.0000,2.0000)(0.0000,1.0000)
-(3.0000,-1.0000)(2.0000,0.0000)
-
-Spectral Norm = 4.4609

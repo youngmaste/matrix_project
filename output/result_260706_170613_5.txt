@@ -1,0 +1,20 @@
+
+  Matrix Size: 256x256
+  ---------------------------------------------
+    Naive:            0.0093 s
+    Block:            0.0138 s  (0.6766x)
+    Threaded+Block:   0.0057 s  (1.6353x)
+
+  Matrix Size: 512x512
+  ---------------------------------------------
+    Naive:            0.1200 s
+    Block:            0.0787 s  (1.5256x)
+    Threaded+Block:   0.0175 s  (6.8395x)
+
+  Matrix Size: 1024x1024
+  ---------------------------------------------
+    Naive:            1.3496 s
+    Block:            0.6612 s  (2.0411x)
+    Threaded+Block:   0.1293 s  (10.4393x)
+
+  Benchmark complete.

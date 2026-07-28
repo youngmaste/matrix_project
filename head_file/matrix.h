@@ -2,7 +2,7 @@
 #define MATRIX_H
 
 #include "matrix_base.h"
-#include "vector.h"  // 关键修复：包含vector，解决类型不完整
+#include "vector.h"  
 #include <vector>
 #include <map>
 #include <fstream>
@@ -94,64 +94,6 @@ public:
         }
     }
 
-    bool loadFromFile(const std::string& path) override {
-        std::ifstream file(path);
-        if (!file.is_open()) return false;
-        int r, c;
-        file >> r >> c;
-        free();
-        allocate(r, c);
-        for (int i = 0; i < r; ++i)
-            for (int j = 0; j < c; ++j)
-                file >> data[i][j];
-        file.close();
-        return true;
-    }
-
-    bool saveToFile(const std::string& path) const override {
-        std::ofstream file(path);
-        if (!file.is_open()) return false;
-        file << _rows << " " << _cols << "\n";
-        for (int i = 0; i < _rows; ++i) {
-            for (int j = 0; j < _cols; ++j)
-                file << data[i][j] << " ";
-            file << "\n";
-        }
-        file.close();
-        return true;
-    }
-
-    MatrixBase<T>* add(const MatrixBase<T>& other) const override {
-        if (_rows != other.rows() || _cols != other.cols())
-            throw std::invalid_argument("Dimension mismatch");
-        Matrix<T>* res = new Matrix<T>(_rows, _cols);
-        for (int i = 0; i < _rows; ++i)
-            for (int j = 0; j < _cols; ++j)
-                (*res)(i, j) = data[i][j] + other(i, j);
-        return res;
-    }
-
-    MatrixBase<T>* sub(const MatrixBase<T>& other) const override {
-        if (_rows != other.rows() || _cols != other.cols())
-            throw std::invalid_argument("Dimension mismatch");
-        Matrix<T>* res = new Matrix<T>(_rows, _cols);
-        for (int i = 0; i < _rows; ++i)
-            for (int j = 0; j < _cols; ++j)
-                (*res)(i, j) = data[i][j] - other(i, j);
-        return res;
-    }
-
-    MatrixBase<T>* mul(const MatrixBase<T>& other) const override {
-        if (_cols != other.rows())
-            throw std::invalid_argument("Dimension mismatch");
-        Matrix<T>* res = new Matrix<T>(_rows, other.cols());
-        for (int i = 0; i < _rows; ++i)
-            for (int k = 0; k < _cols; ++k)
-                for (int j = 0; j < other.cols(); ++j)
-                    (*res)(i, j) += data[i][k] * other(k, j);
-        return res;
-    }
-
     Matrix<T> operator+(const Matrix<T>& other) const {
         if (_rows != other._rows || _cols != other._cols)
             throw std::invalid_argument("Dimension mismatch");
@@ -188,6 +130,16 @@ public:
         for (int i = 0; i < _rows; ++i)
             for (int j = 0; j < _cols; ++j)
                 res(i, j) = data[i][j] * scalar;
+        return res;
+    }
+
+    Matrix<T> operator/(T scalar) const {
+        if (scalar == T(0))
+            throw std::invalid_argument("Division by zero scalar");
+        Matrix<T> res(_rows, _cols);
+        for (int i = 0; i < _rows; ++i)
+            for (int j = 0; j < _cols; ++j)
+                res(i, j) = data[i][j] / scalar;
         return res;
     }
 
@@ -252,7 +204,7 @@ public:
         return det;
     }
 
-    int rank() const {
+    int rank() const override {
         Matrix<T> mat = *this;
         int n = _rows, m = _cols;
         int rank_val = 0;
@@ -434,7 +386,7 @@ public:
         }
     }
 
-    double norm_frobenius() const {
+    double norm_frobenius() const override {
         double sum = 0.0;
         int rows = _rows;
         int cols = _cols;
@@ -544,7 +496,7 @@ public:
         return nA * nAi;
     }
 
-    // ===================== 特征值/特征向量（完全适配你的vector.h） ======================
+    // ===================== 特征值/特征向量（完全适配vector.h） ======================
     using Complex = std::complex<double>;
     const double EIGEN_EPS = 1e-8;
 
@@ -573,7 +525,7 @@ public:
 
                 for (int k=0;k<n-1;k++){
                     Vector<Complex> v(n);
-                    // 🔥 核心修复：v(i) → v(i,0) 适配你的vector.h
+                    // 核心修复：v(i) → v(i,0) 适配vector.h
                     for(int i=0;i<n;i++) v(i,0)=A(i,k);
                     double nrm=0;
                     for(int i=k;i<n;i++) nrm+=std::norm(v(i,0));
@@ -605,7 +557,7 @@ public:
 
                 for(int k=0;k<n-1;k++){
                     Vector<double> v(n);
-                    // 🔥 核心修复：v(i) → v(i,0) 适配你的vector.h
+                    //  核心修复：v(i) → v(i,0) 适配vector.h
                     for(int i=0;i<n;i++) v(i,0)=A(i,k);
                     double nrm=0;
                     for(int i=k;i<n;i++) nrm+=v(i,0)*v(i,0);
@@ -659,16 +611,35 @@ public:
         for(int i=0;i<n;i++) L(i,i)=lam;
         auto r=(A-L).rref();
 
-        Vector<Complex> v(n);
-        // 🔥 核心修复：v(i) → v(i,0) + 补全return
-        v(n-1,0)=Complex(1,0);
-        for(int i=n-2;i>=0;i--){
-            Complex sum=0;
-            for(int j=i+1;j<n;j++)
-                sum+=r(i,j)*v(j,0);
-            v(i,0)=-sum;
+        // Find pivot columns in RREF
+        std::vector<int> pivotCol(n, -1);
+        for(int i=0;i<n;i++){
+            for(int j=0;j<n;j++){
+                if(abs(r(i,j)) > 1e-10){ pivotCol[i] = j; break; }
+            }
         }
-        return v; // 🔥 修复缺失return的报错
+
+        // Find free columns (non-pivot)
+        std::vector<bool> isPivot(n, false);
+        for(int i=0;i<n;i++)
+            if(pivotCol[i] >= 0) isPivot[pivotCol[i]] = true;
+
+        int freeCol = -1;
+        for(int j=n-1;j>=0;j--)
+            if(!isPivot[j]){ freeCol = j; break; }
+
+        Vector<Complex> v(n);
+        if(freeCol < 0){ for(int i=0;i<n;i++) v(i,0)=Complex(0,0); return v; }
+
+        v(freeCol,0)=Complex(1,0);
+        for(int i=n-1;i>=0;i--){
+            int pc = pivotCol[i];
+            if(pc < 0) continue;
+            Complex sum=0;
+            for(int j=pc+1;j<n;j++) sum += r(i,j) * v(j,0);
+            v(pc,0) = -sum;
+        }
+        return v;
     }
 
     bool isDiagonalizable() const {
@@ -704,7 +675,5 @@ public:
         return is;
     }
 };
-
-using ComplexMatrix = Matrix<std::complex<double>>;
 
 #endif
