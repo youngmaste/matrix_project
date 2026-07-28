@@ -1,4 +1,0 @@
-Read 5 points.
-
-Fitted polynomial: y = 2.2000 + 1.1000x + 0.5000x^2
-RMSE = 0.5657

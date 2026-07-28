@@ -1,5 +1,0 @@
-C:/Users/24187/Desktop/matrix_project/gui/build/CMakeFiles/matrix_gui.dir
-C:/Users/24187/Desktop/matrix_project/gui/build/CMakeFiles/edit_cache.dir
-C:/Users/24187/Desktop/matrix_project/gui/build/CMakeFiles/rebuild_cache.dir
-C:/Users/24187/Desktop/matrix_project/gui/build/CMakeFiles/matrix_gui_autogen_timestamp_deps.dir
-C:/Users/24187/Desktop/matrix_project/gui/build/CMakeFiles/matrix_gui_autogen.dir
